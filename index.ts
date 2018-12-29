@@ -104,12 +104,10 @@ export default class ImgUploadService {
 
   getObjectURL(file) {
     var url = null;
-    if (window.createObjectURL !== undefined) {
-      url = window.createObjectURL(file);
-    } else if (window.URL !== undefined) {
-      url = window.URL.createObjectURL(file);
-    } else if (window.webkitURL !== undefined) {
-      url = window.webkitURL.createObjectURL(file);
+    if (URL !== undefined) {
+      url = URL.createObjectURL(file);
+    } else if (webkitURL !== undefined) {
+      url = webkitURL.createObjectURL(file);
     }
     return url;
   };
