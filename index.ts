@@ -10,7 +10,7 @@
 
 // })
 
-// import EXIF from 'exif-js';
+import EXIF from 'exif-js';
 /**
  * 裁剪图片
  * @param data = {
@@ -26,11 +26,11 @@ export default class ImgUploadService {
   //获取图片方向
   getPhotoOrientation(img, next) {
     var orient = 1;
-    next(orient);
-    // EXIF.getData(img, () => {
-    //   orient = EXIF.getTag(this, 'Orientation');
-    //   next(orient);
-    // });
+    // next(orient);
+    EXIF.getData(img, () => {
+      orient = EXIF.getTag(this, 'Orientation');
+      next(orient);
+    });
   }
 
   draw(data, next, id) {
