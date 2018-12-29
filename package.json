@@ -1,0 +1,18 @@
+{
+  "name": "cut-img",
+  "version": "0.1.0",
+  "description": "cut img",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cut",
+    "img"
+  ],
+  "author": "zhaoyang",
+  "license": "MIT",
+  "dependencies": {
+    "exif-js": "^2.3.0"
+  }
+}
