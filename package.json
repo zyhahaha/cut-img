@@ -1,6 +1,6 @@
 {
-  "name": "zyhahaha",
-  "version": "0.1.1",
+  "name": "cut-img-filesize",
+  "version": "0.1.0",
   "description": "cut img",
   "main": "index.js",
   "scripts": {
