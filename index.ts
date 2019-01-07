@@ -24,7 +24,7 @@ export default class ImgUploadService {
   };
 
   //获取图片方向
-  getPhotoOrientation(img, next) {
+  public getPhotoOrientation(img, next) {
     var orient = 1;
     // next(orient);
     EXIF.getData(img, () => {
