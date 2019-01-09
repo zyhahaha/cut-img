@@ -17,7 +17,26 @@ interface IDrawData {
     type: string
   },
   max: number
-}
+};
+interface IImage {
+  src: string | null,
+  onload: Function | null,
+  width: number,
+  height: number
+};
+interface ICanvasContext {
+  clearRect: Function,
+  translate: Function,
+  rotate: Function,
+  drawImage: Function
+};
+interface ICanvas {
+  width: number,
+  height: number,
+  toDataURL: Function,
+  setAttribute: Function,
+  getContext: Function
+};
 /**
  * 裁剪图片
  * @param data = {
@@ -41,33 +60,16 @@ export default class ImgUploadService {
   }
 
   draw(data: IDrawData, next: Function, id: string) {
-    let that = this;
-    let max = data.max;
-    let canvas: {
-      width: number,
-      height: number,
-      toDataURL: Function,
-      setAttribute: Function,
-      getContext: Function
-    };
+    let canvas: ICanvas;
+    let context: ICanvasContext;
+    let img: IImage;
     let file = data.file;
-    let context: {
-      clearRect: Function,
-      translate: Function,
-      rotate: Function,
-      drawImage: Function
-    };
-    let img: {
-      src: string | null,
-      onload: Function | null,
-      width: number,
-      height: number
-    };
-    if (that.isImage(file.type)) {
+    let max = data.max;
+    if (this.isImage(file.type)) {
       img = new Image();
-      img.src = that.getObjectURL(file);
+      img.src = this.getObjectURL(file);
       img.onload = () => {
-        that.getPhotoOrientation(img, (orient: number) => {
+        this.getPhotoOrientation(img, (orient: number) => {
           let maxWidth = img.width,
             maxHeight = img.height;
           if (img.width > img.height) {
@@ -82,7 +84,7 @@ export default class ImgUploadService {
             }
           }
           if (id) {
-            canvas = document.getElementById(id);
+            // canvas = document.getElementById(id);
           } else {
             canvas = document.createElement('canvas');
           }
@@ -106,7 +108,7 @@ export default class ImgUploadService {
             context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
           }
           let strDataURI = canvas.toDataURL(file.type);
-          let blob = that.dataURItoBlob(strDataURI);
+          let blob = this.dataURItoBlob(strDataURI);
           // data.file = blob;
           next(blob);
         });
@@ -127,7 +129,7 @@ export default class ImgUploadService {
     }
   }
 
-  getObjectURL(file: {type: string}) {
+  getObjectURL(file: { type: string }) {
     let url = null;
     if (URL !== undefined) {
       url = URL.createObjectURL(file);
