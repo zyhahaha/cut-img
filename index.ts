@@ -6,7 +6,7 @@
 //   max: 140,
 //   url: url
 // };
-// this.ImgUploadService.draw(fileData, function(res){
+// this.CutImg.cut(fileData, function(res){
 
 // })
 
@@ -18,12 +18,12 @@ interface IDrawData {
   },
   max: number
 };
-interface IImage {
-  src: string,
-  onload: Function | null,
-  width: number,
-  height: number
-};
+// interface IImage {
+//   src: string,
+//   onload: Function | null,
+//   width: number,
+//   height: number
+// };
 interface ICanvasContext {
   clearRect: Function,
   translate: Function,
@@ -44,13 +44,13 @@ interface ICanvas {
  *  max: 123,
  * }
  */
-export default class ImgUploadService {
+export default class CutImg {
   constructor() {
     // this.Upload = Upload;
   };
 
   //获取图片方向
-  public getPhotoOrientation(img: HTMLImageElement, next: Function) {
+  private getPhotoOrientation(img: HTMLImageElement, next: Function) {
     let orient = 1;
     // next(orient);
     EXIF.getData(img, () => {
@@ -59,7 +59,7 @@ export default class ImgUploadService {
     });
   }
 
-  draw(data: IDrawData, next: Function, id: string) {
+  public cut(data: IDrawData, next: Function, id: string) {
     let canvas: ICanvas;
     let context: ICanvasContext;
     let img: HTMLImageElement;
@@ -116,7 +116,7 @@ export default class ImgUploadService {
     }
   }
 
-  isImage(type: string) {
+  private isImage(type: string) {
     switch (type) {
       case 'image/jpeg':
       case 'image/png':
@@ -129,7 +129,7 @@ export default class ImgUploadService {
     }
   }
 
-  getObjectURL(file: { type: string }) {
+  protected getObjectURL(file: { type: string }) {
     let url = null;
     if (URL !== undefined) {
       url = URL.createObjectURL(file);
@@ -139,7 +139,7 @@ export default class ImgUploadService {
     return url;
   };
 
-  dataURItoBlob(dataURI: string) {
+  private dataURItoBlob(dataURI: string) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
     let byteString = atob(dataURI.split(',')[1]);

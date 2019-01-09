@@ -12,7 +12,6 @@ import * as EXIF from 'exif-js';
 ;
 ;
 ;
-;
 /**
  * 裁剪图片
  * @param data = {
