@@ -50,10 +50,10 @@ export default class ImgUploadService {
   };
 
   //获取图片方向
-  public getPhotoOrientation(img: IImage, next: Function) {
+  public getPhotoOrientation(img: HTMLImageElement, next: Function) {
     let orient = 1;
     // next(orient);
-    EXIF.getData(img.src, () => {
+    EXIF.getData(img, () => {
       orient = EXIF.getTag(this, 'Orientation');
       next(orient);
     });
@@ -62,7 +62,7 @@ export default class ImgUploadService {
   draw(data: IDrawData, next: Function, id: string) {
     let canvas: ICanvas;
     let context: ICanvasContext;
-    let img: IImage;
+    let img: HTMLImageElement;
     let file = data.file;
     let max = data.max;
     if (this.isImage(file.type)) {
