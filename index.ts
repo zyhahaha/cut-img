@@ -19,7 +19,7 @@ interface IDrawData {
   max: number
 };
 interface IImage {
-  src: string | null,
+  src: string,
   onload: Function | null,
   width: number,
   height: number
@@ -50,10 +50,10 @@ export default class ImgUploadService {
   };
 
   //获取图片方向
-  public getPhotoOrientation(img: object, next: Function) {
+  public getPhotoOrientation(img: IImage, next: Function) {
     let orient = 1;
     // next(orient);
-    EXIF.getData(img, () => {
+    EXIF.getData(img.src, () => {
       orient = EXIF.getTag(this, 'Orientation');
       next(orient);
     });
@@ -67,7 +67,7 @@ export default class ImgUploadService {
     let max = data.max;
     if (this.isImage(file.type)) {
       img = new Image();
-      img.src = this.getObjectURL(file);
+      img.src = this.getObjectURL(file) || '';
       img.onload = () => {
         this.getPhotoOrientation(img, (orient: number) => {
           let maxWidth = img.width,
