@@ -1,6 +1,6 @@
 /**
  * eg:
- * let file = {}; 文件对象
+ * let file = {}; // Blob
  * let fileData = {
  *  file: file,
  *  max: 140,
@@ -21,67 +21,69 @@ export default class CutImg {
   };
 
   /**
-   * 裁剪图片
+   * cut img
    * @param data = {
    *  file: file,
    *  max: 123,
    * }
   */
-  public cut(data: IDrawData, next: Function, id: string) {
+  public cut(data: IDrawData, id: string) {
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
     let img: HTMLImageElement;
     let file = data.file;
     let max = data.max;
     if (this.isImage(file.type)) {
-      img = new Image();
-      img.src = this.getObjectURL(file) || '';
-      img.onload = () => {
-        this.getPhotoOrientation(img, (orient: number) => {
-          let maxWidth = img.width,
-            maxHeight = img.height;
-          if (img.width > img.height) {
-            if (img.width > max) {
-              maxWidth = max;
-              maxHeight = maxWidth / img.width * img.height;
+      return new Promise((resolve, reject) => {
+        img = new Image();
+        img.src = this.getObjectURL(file) || '';
+        img.onload = () => {
+          this.getPhotoOrientation(img).then((orient: number) => {
+            let maxWidth = img.width,
+              maxHeight = img.height;
+            if (img.width > img.height) {
+              if (img.width > max) {
+                maxWidth = max;
+                maxHeight = maxWidth / img.width * img.height;
+              }
+            } else {
+              if (img.height > max) {
+                maxHeight = max;
+                maxWidth = maxHeight / img.height * img.width;
+              }
             }
-          } else {
-            if (img.height > max) {
-              maxHeight = max;
-              maxWidth = maxHeight / img.height * img.width;
+            if (id) {
+              // canvas = document.getElementById(id);
+              canvas = document.createElement('canvas');
+            } else {
+              canvas = document.createElement('canvas');
             }
-          }
-          if (id) {
-            // canvas = document.getElementById(id);
-            canvas = document.createElement('canvas');
-          } else {
-            canvas = document.createElement('canvas');
-          }
 
-          if (orient === 6) {
-            canvas.setAttribute('width', String(maxHeight));
-            canvas.setAttribute('height', String(maxWidth));
-          } else {
-            canvas.setAttribute('width', String(maxWidth));
-            canvas.setAttribute('height', String(maxHeight));
-          }
-          context = canvas.getContext('2d') || context;
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          if (orient === 6) {
-            // context.save();
-            context.translate(maxHeight, 0);
-            context.rotate(90 * Math.PI / 180);
-            context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.height, canvas.width);
-            // context.restore();
-          } else {
-            context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-          }
-          let strDataURI = canvas.toDataURL(file.type);
-          let blob = this.dataURItoBlob(strDataURI);
-          // data.file = blob;
-          next(blob);
-        });
-      };
+            if (orient === 6) {
+              canvas.setAttribute('width', String(maxHeight));
+              canvas.setAttribute('height', String(maxWidth));
+            } else {
+              canvas.setAttribute('width', String(maxWidth));
+              canvas.setAttribute('height', String(maxHeight));
+            }
+            context = canvas.getContext('2d') || context;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            if (orient === 6) {
+              // context.save();
+              context.translate(maxHeight, 0);
+              context.rotate(90 * Math.PI / 180);
+              context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.height, canvas.width);
+              // context.restore();
+            } else {
+              context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+            }
+            let strDataURI = canvas.toDataURL(file.type);
+            let blob = this.dataURItoBlob(strDataURI);
+            // data.file = blob;
+            resolve(blob);
+          });
+        };
+      });
     }
   }
 
@@ -98,14 +100,19 @@ export default class CutImg {
     }
   }
 
-  //获取图片方向
-  private getPhotoOrientation(img: HTMLImageElement, next: Function) {
-    let orient = 1;
-    // next(orient);
-    EXIF.getData(img, () => {
-      orient = EXIF.getTag(this, 'Orientation');
-      next(orient);
-    });
+  // get direction
+  private getPhotoOrientation(img: HTMLImageElement): PromiseLike<number> {
+    let orient: number = 1;
+    return new Promise((resolve, reject) => {
+      EXIF.getData(img, () => {
+        try {
+          orient = EXIF.getTag(this, 'Orientation');
+          resolve(orient);
+        } catch (error) {
+          reject(1);
+        }
+      });
+    })
   }
 
   protected getObjectURL(file: { type: string }) {
