@@ -16,34 +16,11 @@ interface IDrawData {
   },
   max: number
 };
-interface ICanvasContext {
-  clearRect: Function,
-  translate: Function,
-  rotate: Function,
-  drawImage: Function
-};
-interface ICanvas {
-  width: number,
-  height: number,
-  toDataURL: Function,
-  setAttribute: Function,
-  getContext: Function
-};
 
 export default class CutImg {
   constructor() {
     // this.Upload = Upload;
   };
-
-  //获取图片方向
-  private getPhotoOrientation(img: HTMLImageElement, next: Function) {
-    let orient = 1;
-    // next(orient);
-    EXIF.getData(img, () => {
-      orient = EXIF.getTag(this, 'Orientation');
-      next(orient);
-    });
-  }
 
   /**
    * 裁剪图片
@@ -53,8 +30,8 @@ export default class CutImg {
    * }
   */
   public cut(data: IDrawData, next: Function, id: string) {
-    let canvas: ICanvas;
-    let context: ICanvasContext;
+    let canvas: HTMLCanvasElement;
+    let context: CanvasRenderingContext2D;
     let img: HTMLImageElement;
     let file = data.file;
     let max = data.max;
@@ -78,6 +55,7 @@ export default class CutImg {
           }
           if (id) {
             // canvas = document.getElementById(id);
+            canvas = document.createElement('canvas');
           } else {
             canvas = document.createElement('canvas');
           }
@@ -89,11 +67,11 @@ export default class CutImg {
             canvas.setAttribute('width', String(maxWidth));
             canvas.setAttribute('height', String(maxHeight));
           }
-          context = canvas.getContext('2d');
+          context = canvas.getContext('2d') || context;
           context.clearRect(0, 0, canvas.width, canvas.height);
           if (orient === 6) {
             // context.save();
-            context.translate(String(maxHeight), 0);
+            context.translate(maxHeight, 0);
             context.rotate(90 * Math.PI / 180);
             context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.height, canvas.width);
             // context.restore();
@@ -120,6 +98,16 @@ export default class CutImg {
       default:
         return false;
     }
+  }
+
+  //获取图片方向
+  private getPhotoOrientation(img: HTMLImageElement, next: Function) {
+    let orient = 1;
+    // next(orient);
+    EXIF.getData(img, () => {
+      orient = EXIF.getTag(this, 'Orientation');
+      next(orient);
+    });
   }
 
   protected getObjectURL(file: { type: string }) {
