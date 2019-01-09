@@ -1,14 +1,12 @@
-// eg:
-// let url = '/api/private_barcode_tmpl_image/upload';
-// let file = {}; // 文件对象
-// let fileData = {
-//   file: file,
-//   max: 140,
-//   url: url
-// };
-// this.CutImg.cut(fileData, function(res){
-
-// })
+/**
+ * eg:
+ * let file = {}; 文件对象
+ * let fileData = {
+ *  file: file,
+ *  max: 140,
+ * };
+ * this.CutImg.cut(fileData, function(res){})
+ */
 
 import * as EXIF from 'exif-js';
 
@@ -18,12 +16,6 @@ interface IDrawData {
   },
   max: number
 };
-// interface IImage {
-//   src: string,
-//   onload: Function | null,
-//   width: number,
-//   height: number
-// };
 interface ICanvasContext {
   clearRect: Function,
   translate: Function,
@@ -37,13 +29,7 @@ interface ICanvas {
   setAttribute: Function,
   getContext: Function
 };
-/**
- * 裁剪图片
- * @param data = {
- *  file: file,
- *  max: 123,
- * }
- */
+
 export default class CutImg {
   constructor() {
     // this.Upload = Upload;
@@ -59,6 +45,13 @@ export default class CutImg {
     });
   }
 
+  /**
+   * 裁剪图片
+   * @param data = {
+   *  file: file,
+   *  max: 123,
+   * }
+  */
   public cut(data: IDrawData, next: Function, id: string) {
     let canvas: ICanvas;
     let context: ICanvasContext;
