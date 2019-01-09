@@ -11,9 +11,7 @@
 import * as EXIF from 'exif-js';
 
 interface IDrawData {
-  file: {
-    type: string
-  },
+  file: Blob,
   max: number
 };
 
