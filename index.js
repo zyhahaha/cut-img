@@ -16,10 +16,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var EXIF = __importStar(require("exif-js"));
+const EXIF = __importStar(require("exif-js"));
 ;
-var CutImg = /** @class */ (function () {
-    function CutImg() {
+class CutImg {
+    constructor() {
         // this.Upload = Upload;
     }
     ;
@@ -30,20 +30,19 @@ var CutImg = /** @class */ (function () {
      *  max: 123,
      * }
     */
-    CutImg.prototype.cut = function (data, id) {
-        var _this = this;
-        var canvas;
-        var context;
-        var img;
-        var file = data.file;
-        var max = data.max;
+    cut(data, id) {
+        let canvas;
+        let context;
+        let img;
+        let file = data.file;
+        let max = data.max;
         if (this.isImage(file.type)) {
-            return new Promise(function (resolve, reject) {
+            return new Promise((resolve, reject) => {
                 img = new Image();
-                img.src = _this.getObjectURL(file) || '';
-                img.onload = function () {
-                    _this.getPhotoOrientation(img).then(function (orient) {
-                        var maxWidth = img.width, maxHeight = img.height;
+                img.src = this.getObjectURL(file) || '';
+                img.onload = () => {
+                    this.getPhotoOrientation(img).then((orient) => {
+                        let maxWidth = img.width, maxHeight = img.height;
                         if (img.width > img.height) {
                             if (img.width > max) {
                                 maxWidth = max;
@@ -83,16 +82,16 @@ var CutImg = /** @class */ (function () {
                         else {
                             context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
                         }
-                        var strDataURI = canvas.toDataURL(file.type);
-                        var blob = _this.dataURItoBlob(strDataURI);
+                        let strDataURI = canvas.toDataURL(file.type);
+                        let blob = this.dataURItoBlob(strDataURI);
                         // data.file = blob;
                         resolve(blob);
                     });
                 };
             });
         }
-    };
-    CutImg.prototype.isImage = function (type) {
+    }
+    isImage(type) {
         switch (type) {
             case 'image/jpeg':
             case 'image/png':
@@ -103,15 +102,14 @@ var CutImg = /** @class */ (function () {
             default:
                 return false;
         }
-    };
+    }
     // get direction
-    CutImg.prototype.getPhotoOrientation = function (img) {
-        var _this = this;
-        var orient = 1;
-        return new Promise(function (resolve, reject) {
-            EXIF.getData(img, function () {
+    getPhotoOrientation(img) {
+        let orient = 1;
+        return new Promise((resolve, reject) => {
+            EXIF.getData(img, () => {
                 try {
-                    orient = EXIF.getTag(_this, 'Orientation');
+                    orient = EXIF.getTag(this, 'Orientation');
                     resolve(orient);
                 }
                 catch (error) {
@@ -119,9 +117,9 @@ var CutImg = /** @class */ (function () {
                 }
             });
         });
-    };
-    CutImg.prototype.getObjectURL = function (file) {
-        var url = null;
+    }
+    getObjectURL(file) {
+        let url = null;
         if (URL !== undefined) {
             url = URL.createObjectURL(file);
         }
@@ -129,28 +127,27 @@ var CutImg = /** @class */ (function () {
             url = webkitURL.createObjectURL(file);
         }
         return url;
-    };
+    }
     ;
-    CutImg.prototype.dataURItoBlob = function (dataURI) {
+    dataURItoBlob(dataURI) {
         // convert base64 to raw binary data held in a string
         // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-        var byteString = atob(dataURI.split(',')[1]);
+        let byteString = atob(dataURI.split(',')[1]);
         // separate out the mime component
-        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
         // write the bytes of the string to an ArrayBuffer
-        var ab = new ArrayBuffer(byteString.length);
-        var ia = new Uint8Array(ab);
-        for (var i = 0; i < byteString.length; i++) {
+        let ab = new ArrayBuffer(byteString.length);
+        let ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
             ia[i] = byteString.charCodeAt(i);
         }
         // write the ArrayBuffer to a blob, and you're done
-        var blob = new Blob([ab], { type: mimeString });
+        let blob = new Blob([ab], { type: mimeString });
         return blob;
         // Old code
         // let bb = new BlobBuilder();
         // bb.append(ab);
         // return bb.getBlob(mimeString);
-    };
-    return CutImg;
-}());
+    }
+}
 exports.default = CutImg;

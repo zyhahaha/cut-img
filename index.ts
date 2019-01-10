@@ -34,7 +34,7 @@ export default class CutImg {
     let file = data.file;
     let max = data.max;
     if (this.isImage(file.type)) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve: Function, reject: Function) => {
         img = new Image();
         img.src = this.getObjectURL(file) || '';
         img.onload = () => {
@@ -103,7 +103,7 @@ export default class CutImg {
   // get direction
   private getPhotoOrientation(img: HTMLImageElement): PromiseLike<number> {
     let orient: number = 1;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: Function, reject: Function) => {
       EXIF.getData(img, () => {
         try {
           orient = EXIF.getTag(this, 'Orientation');
