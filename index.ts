@@ -87,7 +87,7 @@ export default class CutImg {
     }
   }
 
-  private isImage(type: string) {
+  public isImage(type: string) {
     switch (type) {
       case 'image/jpeg':
       case 'image/png':
@@ -101,7 +101,7 @@ export default class CutImg {
   }
 
   // get direction
-  private getPhotoOrientation(img: HTMLImageElement): PromiseLike<number> {
+  public getPhotoOrientation(img: HTMLImageElement): PromiseLike<number> {
     let orient: number = 1;
     return new Promise((resolve: Function, reject: Function) => {
       EXIF.getData(img, () => {
@@ -115,7 +115,7 @@ export default class CutImg {
     })
   }
 
-  protected getObjectURL(file: { type: string }) {
+  public getObjectURL(file: { type: string }) {
     let url = null;
     if (URL !== undefined) {
       url = URL.createObjectURL(file);

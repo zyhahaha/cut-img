@@ -4,7 +4,8 @@ interface IDrawData {
 }
 
 interface ICutImgStatic {
-  cut(data: IDrawData, next: Function): any
+  cut(data: IDrawData, next: Function): any,
+  isImage(type: string): boolean,
 }
 
 declare var CutImg: ICutImgStatic;
