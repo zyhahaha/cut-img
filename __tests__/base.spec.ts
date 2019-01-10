@@ -1,5 +1,5 @@
 import CutImg from '../index';
-const webCacheImg = require('./web-cache.jpg');
+// const webCacheImg = require('./web-cache.jpg');
 
 // let params = {
 //   file: webCacheImg,
@@ -13,10 +13,6 @@ test('isImage', () => {
 // test('isImage', () => {
 //   expect(cutImg.getPhotoOrientation(webCacheImg)).toBe(1);
 // })
-
-test('isImage', () => {
-  expect(cutImg.getPhotoOrientation(webCacheImg)).toBe(1);
-})
 
 
 // test('test 2 plus 2 should equal 4', () => {
