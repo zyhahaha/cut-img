@@ -1,11 +1,14 @@
 /**
  * eg:
+ * 
  * let file = {}; // Blob
- * let fileData = {
+ * let params = {
  *  file: file,
  *  max: 140,
  * };
- * this.CutImg.cut(fileData, function(res){})
+ * let cutImg = new CutImg.cut(params).then(res => {
+ *   console.log(res);
+ * })
  */
 
 import * as EXIF from 'exif-js';
@@ -27,12 +30,13 @@ export default class CutImg {
    *  max: 123,
    * }
   */
-  public cut(data: IDrawData, id: string) {
+  public cut(data: IDrawData) {
     let canvas: HTMLCanvasElement;
     let context: CanvasRenderingContext2D;
     let img: HTMLImageElement;
     let file = data.file;
     let max = data.max;
+    canvas = document.createElement('canvas');
     if (this.isImage(file.type)) {
       return new Promise((resolve: Function, reject: Function) => {
         img = new Image();
@@ -52,12 +56,6 @@ export default class CutImg {
                 maxWidth = maxHeight / img.height * img.width;
               }
             }
-            if (id) {
-              // canvas = document.getElementById(id);
-              canvas = document.createElement('canvas');
-            } else {
-              canvas = document.createElement('canvas');
-            }
 
             if (orient === 6) {
               canvas.setAttribute('width', String(maxHeight));
@@ -69,17 +67,14 @@ export default class CutImg {
             context = canvas.getContext('2d') || context;
             context.clearRect(0, 0, canvas.width, canvas.height);
             if (orient === 6) {
-              // context.save();
               context.translate(maxHeight, 0);
               context.rotate(90 * Math.PI / 180);
               context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.height, canvas.width);
-              // context.restore();
             } else {
               context.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
             }
             let strDataURI = canvas.toDataURL(file.type);
             let blob = this.dataURItoBlob(strDataURI);
-            // data.file = blob;
             resolve(blob);
           });
         };
